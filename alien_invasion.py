@@ -1,3 +1,4 @@
+import math
 import sys
 import pygame
 from enemy_bullet import EnemyBullet
@@ -54,6 +55,22 @@ class AlienInvasion:
             self.enemies.append(new_enemy)
         self.motion_counter = 0
         self.which_enemy_fired = 0
+        self.healthbar = pygame.image.load("images/fullhealthbar.png").convert_alpha()
+        self.healthbar = pygame.transform.scale(
+            self.healthbar,
+            (
+                math.ceil(
+                    (self.settings.screen_width / 1920)
+                    * (self.healthbar.get_width())
+                    / 5
+                ),
+                math.ceil(
+                    (self.settings.screen_height / 1080)
+                    * (self.healthbar.get_height())
+                    / 5
+                ),
+            ),
+        )
 
     def run_game(self):
         """Start the main loop for the game"""
@@ -77,7 +94,7 @@ class AlienInvasion:
                     # and no bullets will be updated or drawn to the screen.
                 else:
                     bullet.update()  # Update the position of each fired bullet
-                self.check_collisions()  # Check for collisions between bullets and enemies
+            self.check_collisions()  # Check for collisions between bullets and enemies and between enemy bullets and the ship, and remove them if they collide
             self.check_no_enemies()  # Check if there are no enemies left, and if so, add new enemies to the game
             self.randomly_fire_enemy_bullets()  # Check if any enemies should randomly fire bullets
             self.remove_off_screen_enemy_bullets()  # Remove any enemy bullets that have moved off the bottom of the screen
@@ -174,6 +191,73 @@ class AlienInvasion:
         # The check_collisions method iterates through each bullet in the fired_bullets list and checks for collisions with each enemy in the enemies list using the colliderect method.
         # If a collision is detected, the bullet and enemy are removed from their respective lists.
         # The break statement is used to exit the inner loop after a collision is detected to prevent multiple collisions with the same bullet.
+        """ Check collisions between enemy bullets and the ship, and remove them if they collide. """
+        for bullet in self.fired_enemy_bullets:
+            if bullet.rect.colliderect(self.ship.rect):
+                self.fired_enemy_bullets.remove(bullet)
+                self.ship.health -= 1  # Decrease the ship's health by 1
+                print(f"Ship health: {self.ship.health}")
+                if self.ship.health <= 0:
+                    print("Game Over!")
+                    sys.exit()  # Exit the game if the ship's health reaches 0
+        match self.ship.health:
+            case 3:
+                self.healthbar = pygame.image.load(
+                    "images/fullhealthbar.png"
+                ).convert_alpha()
+                self.healthbar = pygame.transform.scale(
+                    self.healthbar,
+                    (
+                        math.ceil(
+                            (self.settings.screen_width / 1920)
+                            * (self.healthbar.get_width())
+                            / 5
+                        ),
+                        math.ceil(
+                            (self.settings.screen_height / 1080)
+                            * (self.healthbar.get_height())
+                            / 5
+                        ),
+                    ),
+                )
+            case 2:
+                self.healthbar = pygame.image.load(
+                    "images/mediumhealthbar.png"
+                ).convert_alpha()
+                self.healthbar = pygame.transform.scale(
+                    self.healthbar,
+                    (
+                        math.ceil(
+                            (self.settings.screen_width / 1920)
+                            * (self.healthbar.get_width())
+                            / 5
+                        ),
+                        math.ceil(
+                            (self.settings.screen_height / 1080)
+                            * (self.healthbar.get_height())
+                            / 5
+                        ),
+                    ),
+                )
+            case 1:
+                self.healthbar = pygame.image.load(
+                    "images/lowhealthbar.png"
+                ).convert_alpha()
+                self.healthbar = pygame.transform.scale(
+                    self.healthbar,
+                    (
+                        math.ceil(
+                            (self.settings.screen_width / 1920)
+                            * (self.healthbar.get_width())
+                            / 5
+                        ),
+                        math.ceil(
+                            (self.settings.screen_height / 1080)
+                            * (self.healthbar.get_height())
+                            / 5
+                        ),
+                    ),
+                )
 
     def enemy_movement(self):
         """Update the position of the enemies based on a motion pattern."""
@@ -239,6 +323,9 @@ class AlienInvasion:
         # self.screen.fill(self.bg_color)
         self.screen.blit(self.settings.bg, (0, 0))
         self.ship.blitme()
+        self.screen.blit(
+            self.healthbar, (10, 10)
+        )  # Draw the health bar image at the top left corner of the screen
         for bullet in self.fired_bullets:
             bullet.blitme()  # Draw each fired bullet to the screen using its blitme method
         for bullet in self.fired_enemy_bullets:

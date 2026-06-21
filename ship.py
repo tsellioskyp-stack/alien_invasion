@@ -11,6 +11,7 @@ class Ship:
         self.screen = ai_game.screen
         self.screen_rect = ai_game.screen.get_rect()
         self.settings = ai_game.settings
+        self.health = 3  # Initialize the ship's health to 3
 
         # Load the ship image and get its rect.
         self.image = (
