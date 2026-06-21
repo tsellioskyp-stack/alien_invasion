@@ -23,6 +23,8 @@ class AlienInvasion:
         self.enemies
         self.motion_counter
         self.fired_enemy_bullets
+        self.which_enemy_fired
+        self.healthbar
         """
 
         """Initialize the game, and create game resources"""
@@ -62,12 +64,12 @@ class AlienInvasion:
                 math.ceil(
                     (self.settings.screen_width / 1920)
                     * (self.healthbar.get_width())
-                    / 5
+                    / 20
                 ),
                 math.ceil(
                     (self.settings.screen_height / 1080)
                     * (self.healthbar.get_height())
-                    / 5
+                    / 20
                 ),
             ),
         )
@@ -211,12 +213,12 @@ class AlienInvasion:
                         math.ceil(
                             (self.settings.screen_width / 1920)
                             * (self.healthbar.get_width())
-                            / 5
+                            / 20
                         ),
                         math.ceil(
                             (self.settings.screen_height / 1080)
                             * (self.healthbar.get_height())
-                            / 5
+                            / 20
                         ),
                     ),
                 )
@@ -230,12 +232,12 @@ class AlienInvasion:
                         math.ceil(
                             (self.settings.screen_width / 1920)
                             * (self.healthbar.get_width())
-                            / 5
+                            / 20
                         ),
                         math.ceil(
                             (self.settings.screen_height / 1080)
                             * (self.healthbar.get_height())
-                            / 5
+                            / 20
                         ),
                     ),
                 )
@@ -249,12 +251,12 @@ class AlienInvasion:
                         math.ceil(
                             (self.settings.screen_width / 1920)
                             * (self.healthbar.get_width())
-                            / 5
+                            / 20
                         ),
                         math.ceil(
                             (self.settings.screen_height / 1080)
                             * (self.healthbar.get_height())
-                            / 5
+                            / 20
                         ),
                     ),
                 )
@@ -324,7 +326,13 @@ class AlienInvasion:
         self.screen.blit(self.settings.bg, (0, 0))
         self.ship.blitme()
         self.screen.blit(
-            self.healthbar, (10, 10)
+            self.healthbar,
+            (
+                self.ship.rect.centerx - self.healthbar.get_width() // 2,
+                self.ship.rect.centery
+                + self.ship.rect.height
+                + self.healthbar.get_height() // 2,
+            ),
         )  # Draw the health bar image at the top left corner of the screen
         for bullet in self.fired_bullets:
             bullet.blitme()  # Draw each fired bullet to the screen using its blitme method
